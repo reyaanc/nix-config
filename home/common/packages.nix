@@ -7,11 +7,8 @@
     ffmpeg-full
     gdu
     gh
-    helmfile
     imagemagickBig
     jq
-    kubernetes-helm
-    kustomize
     librsvg
     mutagen
     neovim
@@ -21,7 +18,6 @@
     ripgrep
     _7zz
     statix
-    terraform
     todoist-cli
     typst
     uv

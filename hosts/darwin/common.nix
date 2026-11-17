@@ -20,6 +20,11 @@
   homebrew = {
     enable = true;
 
+    onActivation = {
+      autoUpdate = true;
+      upgrade = true;
+    };
+
     taps = [
       "felixkratz/formulae"
       "penso/tap"
