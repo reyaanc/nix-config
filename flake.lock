@@ -103,8 +103,8 @@
     },
     "work": {
       "locked": {
-        "lastModified": 1794940504,
-        "narHash": "sha256-tN+vU/CGzQj2eHQqFvLfCHRgOCXxVyhOnD3xPDazyXU=",
+        "lastModified": 1794942898,
+        "narHash": "sha256-0SzI0CwSR3xuWi8hAk3+kyekPb5FOgB7MvOKh05ACIM=",
         "path": "/Users/reyaan/Personal/nix-work",
         "type": "path"
       },

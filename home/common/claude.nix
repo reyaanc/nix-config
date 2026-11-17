@@ -67,7 +67,6 @@ in
           "Read(./**/id_rsa*)"
           "Read(~/.aws/**)"
           "Read(~/.ssh/**)"
-          "Read(~/nix-keys/**)"
           "Bash(rm -rf /:*)"
           "Bash(sudo:*)"
           "Bash(curl* | sh)"
@@ -128,9 +127,6 @@ in
         network = {
           allowedDomains = [ "github.com" "*.githubusercontent.com" "pypi.org" "files.pythonhosted.org" ];
         };
-        filesystem = {
-          allowWrite = [ "~/Work/docs" ];
-        };
         credentials = {
           files = [
             {
@@ -139,10 +135,6 @@ in
             }
             {
               path = "~/.ssh/id_rsa";
-              mode = "deny";
-            }
-            {
-              path = "~/nix-keys/reyaan.private.pem";
               mode = "deny";
             }
           ];
@@ -160,24 +152,6 @@ in
         soft_deny = [
           "$defaults"
           "git push to any branch on any remote"
-          "any write to a host, bucket, namespace, or container whose name contains 'prod' or 'production'"
-        ];
-        environment = [
-          "### Org-wide"
-          "**Organization**: VitalBio (github.com/VitalBio)"
-          "**Cloud provider(s)**: AWS, on-premise"
-          "**Repository visibility**: private"
-          "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary"
-          "**Secrets management**: None configured"
-          "**Default / protected branches**: main (default); protected: main, develop, staging, releases"
-          "**Source control**: VitalBio repositories and their remotes only"
-          "**Sensitive data locations & audiences**: .env, .env.local and any similar credential/config files; any file holding personal data, confidential business data, credentials, or regulated material"
-          "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment; also treat protected branches and their deploy targets as sensitive"
-          "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything tagged `prod` or `production`"
-          "### User-specific"
-          "**Primary use of Claude Code**: software development (Python services)"
-          "**Org-specific CLIs**: uv, uvx"
-          "routine within the working directory: uv/uvx toolchain commands, pytest, ruff"
         ];
       };
     };
