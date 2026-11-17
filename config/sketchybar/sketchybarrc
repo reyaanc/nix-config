@@ -1,0 +1,201 @@
+#!/bin/bash
+
+PLUGIN_DIR="$CONFIG_DIR/plugins"
+source "$CONFIG_DIR/colors.sh"
+
+# Workspaces snapshots left over from before a reload would stop the rebuilt bar being drawn and agenda.py re-measuring it.
+mkdir -p /tmp/sketchybar
+rm -f /tmp/sketchybar/workspaces /tmp/sketchybar/workspaces.state
+
+for source in "$CONFIG_DIR"/helpers/*.c; do
+  [ "${source%.c}" -nt "$source" ] || clang -O2 -Wl,-dead_strip_dylibs -framework CoreAudio -framework CoreGraphics -framework CoreFoundation "$source" -o "${source%.c}"
+done
+
+# Hidden until workspaces.sh first reads Skyland, which starts after the bar at login; until then the bar would draw half-filled.
+sketchybar --bar position=top height=32 color=$BAR_COLOR blur_radius=30 padding_left=0 padding_right=0 hidden=on
+
+sketchybar --default \
+  icon.font="$FONT:Bold:14.0" \
+  label.font="$FONT:Bold:13.0" \
+  label.font.typographical_width=on \
+  icon.color=$TEXT \
+  label.color=$TEXT \
+  icon.padding_left=6 \
+  icon.padding_right=4 \
+  label.padding_left=4 \
+  label.padding_right=6
+
+sketchybar --add event aerospace_workspace_change \
+  --add event aerospace_mode_change \
+  --add event workspaces_change \
+  --add event badges_change \
+  --add event firefox_change \
+  --add event positions_change \
+  --add event spotify_change com.spotify.client.PlaybackStateChanged \
+  --add event spotify_scroll \
+  --add event agenda_scroll \
+  --add event awake_change
+
+sketchybar --add item menu left \
+  --set menu icon= icon.font="$FONT:Bold:16.0" icon.color=$SUBTEXT icon.width=44 icon.align=center icon.padding_left=0 icon.padding_right=0 label.drawing=off background.color=$MENU_BG background.height=32 click_script="open raycast://extensions/raycast/navigation/search-menu-items"
+
+sketchybar --add item mode left \
+  --set mode drawing=off icon.drawing=off label=SERVICE label.color=$BASE label.padding_left=10 label.padding_right=10 background.color=$WARN background.height=32 script="$PLUGIN_DIR/mode.sh" \
+  --subscribe mode aerospace_mode_change
+
+spaces=()
+for sid in 1 2 3 4 5 6 7 8 9; do
+  click="if [ \"\$BUTTON\" = right ]; then aerospace move-node-to-workspace $sid; else aerospace workspace $sid; fi"
+  apps=()
+  for slot in 1 2 3 4 5 6 7 8; do
+    apps+=(
+      --add item "space.$sid.$slot" left
+      --set "space.$sid.$slot"
+        drawing=off
+        icon.font="sketchybar-app-font:Regular:15.0"
+        icon.padding_left=0
+        icon.padding_right=0
+        label=
+        label.font="$FONT:Bold:7.0"
+        label.width=0
+        label.y_offset=5
+        label.drawing=off
+        background.color=$WS_FOCUSED
+        background.height=32
+        script="$PLUGIN_DIR/workspace_scroll.sh"
+        click_script="$click"
+      --subscribe "space.$sid.$slot" mouse.scrolled
+    )
+  done
+
+  spaces+=(
+    --add item "space.$sid" left
+    --set "space.$sid"
+      icon="$sid"
+      icon.align=left
+      icon.width=21
+      icon.padding_left=7
+      icon.padding_right=0
+      icon.color=$DIM
+      label=-
+      label.width=21
+      label.align=center
+      label.padding_left=0
+      label.padding_right=0
+      label.color=$DIM
+      background.color=$WS_FOCUSED
+      background.height=32
+      script="$PLUGIN_DIR/workspace_scroll.sh"
+      click_script="$click"
+    --subscribe "space.$sid" mouse.scrolled
+    "${apps[@]}"
+  )
+done
+sketchybar "${spaces[@]}"
+
+sketchybar --add bracket spaces '/space\..*/' \
+  --set spaces background.color=$WS_BG background.height=32
+
+sketchybar --add item workspaces left \
+  --set workspaces drawing=off script="$PLUGIN_DIR/workspaces.sh" \
+  --subscribe workspaces aerospace_workspace_change space_windows_change badges_change firefox_change positions_change display_change
+
+sketchybar --add item badges left \
+  --set badges drawing=off updates=on update_freq=15 script="$PLUGIN_DIR/badges.sh"
+
+sketchybar --add item positions left \
+  --set positions drawing=off updates=on update_freq=15 script="$PLUGIN_DIR/positions.sh" \
+  --subscribe positions aerospace_workspace_change aerospace_mode_change space_windows_change
+
+sketchybar --add item firefox left \
+  --set firefox drawing=off updates=on script="$PLUGIN_DIR/firefox.py" \
+  --subscribe firefox space_windows_change
+
+sketchybar --add item agenda q \
+  --set agenda drawing=off updates=on padding_right=10 update_freq=60 script="$PLUGIN_DIR/serial.sh $PLUGIN_DIR/agenda.py" \
+  --subscribe agenda system_woke workspaces_change mouse.entered mouse.exited agenda_scroll
+
+music_width=255
+title_width=$((music_width - 30))
+
+sketchybar --add slider spotify.progress e $music_width \
+  --set spotify.progress drawing=off width=0 y_offset=-14 icon.drawing=off label.drawing=off slider.background.height=2 slider.background.color=$MUTED \
+  --add item spotify.icon e \
+  --set spotify.icon drawing=off icon= label.drawing=off script="$PLUGIN_DIR/spotify.sh" \
+  --subscribe spotify.icon mouse.clicked \
+  --add item spotify e \
+  --set spotify drawing=off icon.drawing=off label.width=$title_width label.max_chars=$((title_width * 10 / 78)) label.scroll_duration=$((title_width * 60 / 40)) label.padding_left=0 label.padding_right=0 script="$PLUGIN_DIR/spotify.sh" \
+  --subscribe spotify spotify_change mouse.clicked mouse.entered mouse.exited spotify_scroll
+
+status_item=(
+  icon.padding_left=12
+  icon.padding_right=8
+  label.padding_left=0
+  label.padding_right=12
+  background.height=32
+)
+
+popup=(
+  popup.align=center
+  popup.background.color=$BASE
+  popup.background.border_color=$POPUP_BORDER
+  popup.background.border_width=1
+  popup.background.corner_radius=8
+)
+
+# Rows are created once and only ever --set: removing a popup's items destroys its window, which closes it under the cursor.
+popup_row=(
+  icon.width=34
+  icon.padding_left=10
+  icon.padding_right=0
+  label.padding_left=0
+  label.padding_right=0
+  label.font="$FONT:Medium:13.0"
+  background.height=24
+  background.corner_radius=6
+  background.color=$POPUP_HOVER
+  background.drawing=off
+  background.padding_left=5
+  background.padding_right=5
+  script='[ "$SENDER" = mouse.entered ] && hover=on || hover=off; sketchybar --set "$NAME" background.drawing=$hover'
+)
+
+sketchybar --add item clock right \
+  --set clock "${status_item[@]}" icon.drawing=off label.padding_left=14 label.padding_right=24 label.color=$TEXT background.color=$CLOCK_BG update_freq=1 script="$PLUGIN_DIR/clock.sh" click_script="open -a Calendar"
+
+sketchybar --add item battery right \
+  --set battery "${status_item[@]}" icon.font="$FONT:Bold:18.0" icon.width=42 icon.align=left label.width=44 label.align=left background.color=$BATTERY_BG update_freq=120 script="$PLUGIN_DIR/serial.sh $PLUGIN_DIR/battery.sh" \
+    "${popup[@]}" popup.y_offset=4 \
+  --subscribe battery power_source_change system_woke mouse.entered mouse.exited \
+  --add item battery.details popup.battery \
+  --set battery.details icon.drawing=off label.color=$SUBTEXT label.padding_left=12 label.padding_right=12 background.height=30
+
+# Muting fires no volume_change, so the volume is polled too
+sketchybar --add item volume right \
+  --set volume "${status_item[@]}" icon.width=36 icon.align=left label.width=44 label.align=left icon.color=$VOLUME_ICON label.color=$SUBTEXT background.color=$VOLUME_BG update_freq=30 script="$PLUGIN_DIR/volume.sh" \
+  --subscribe volume volume_change mouse.scrolled mouse.clicked
+
+awake_rows=()
+for row in hold.0 hold.1 hold.2 hold.3 hold.4 hold.5 more; do
+  awake_rows+=(
+    --add item "awake.$row" popup.awake
+    --set "awake.$row" "${popup_row[@]}"
+    --subscribe "awake.$row" mouse.entered mouse.exited
+  )
+done
+
+# The awake popup must touch the bar: crossing any gap between them fires mouse.exited.global and closes it.
+sketchybar --add item awake right \
+  --set awake icon= label.drawing=off icon.width=32 icon.align=center icon.padding_left=0 icon.padding_right=0 padding_right=8 update_freq=30 script="$PLUGIN_DIR/serial.sh $PLUGIN_DIR/awake.py" \
+    label.font="$FONT:Bold:7.0" label.width=0 label.y_offset=5 label.padding_left=-12 label.padding_right=12 label.color=$SUBTEXT \
+    "${popup[@]}" popup.height=28 \
+  --subscribe awake mouse.clicked mouse.entered mouse.exited.global awake_change \
+  "${awake_rows[@]}"
+
+sketchybar --add item wireguard right \
+  --set wireguard icon=:wireguard: icon.font="sketchybar-app-font:Regular:19.0" label.drawing=off icon.width=32 icon.align=center icon.padding_left=0 icon.padding_right=0 update_freq=30 script="$PLUGIN_DIR/wireguard.sh"
+
+sketchybar --update
+
+# If Skyland never starts, workspaces.sh never draws, so the bar is shown anyway after a grace period
+(sleep 20; sketchybar --bar hidden=off) &

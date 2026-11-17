@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Wallpaper</title>
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <img class="layer" id="background" alt="">
+  <div class="widget clock" data-anchor="top-center">
+    <time></time>
+  </div>
+  <p class="widget date" data-anchor="top-center"></p>
+  <div class="layer" id="mask" hidden></div>
+  <fieldset class="news">
+    <legend>&#xf1d4; hacker news</legend>
+    <ol></ol>
+    <button type="button">more ▾</button>
+  </fieldset>
+  <script>
+    const background = document.getElementById("background");
+    const mask = document.getElementById("mask");
+    const clock = document.querySelector(".clock");
+    const time = document.querySelector("time");
+    const date = document.querySelector(".date");
+    let current;
+    let version;
+
+    function tick() {
+      const now = new Date();
+      const colon = document.createElement("span");
+      colon.className = "colon";
+      colon.textContent = ":";
+      time.replaceChildren(String(now.getHours()).padStart(2, "0"), colon, String(now.getMinutes()).padStart(2, "0"));
+      date.textContent = now.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+      setTimeout(tick, 60000 - now.getSeconds() * 1000 - now.getMilliseconds());
+    }
+
+    function show(wallpaper) {
+      const key = JSON.stringify(wallpaper);
+      if (key === current) return;
+      current = key;
+      background.src = `${wallpaper.dir}/background.jpg`;
+      mask.hidden = !wallpaper.mask;
+      mask.style.backgroundImage = `url("${wallpaper.dir}/background.jpg")`;
+      mask.style.setProperty("--mask", `url("${wallpaper.mask}")`);
+
+      for (const [name, widget] of [["clock", clock], ["date", date]]) {
+        const settings = wallpaper.widgets[name] ?? {};
+        widget.dataset.anchor = settings.anchor ?? "top-center";
+        for (const property of ["x", "y", "size", "color", "shadow-color", "halo"]) {
+          if (property in settings) widget.style.setProperty(`--${property}`, settings[property]);
+          else widget.style.removeProperty(`--${property}`);
+        }
+      }
+
+      const theme = wallpaper.theme ?? {};
+      for (const property of ["tint", "text", "muted", "accent"]) {
+        if (property in theme) document.documentElement.style.setProperty(`--${property}`, theme[property]);
+        else document.documentElement.style.removeProperty(`--${property}`);
+      }
+    }
+
+    // file:// pages can't fetch(), so wallpaper.sh writes these as scripts: version.js calls changed() with a stamp,
+    // and only a new stamp loads current.js, which carries the mask and calls show()
+    function load(file) {
+      const script = document.createElement("script");
+      script.src = `${file}?${Date.now()}`;
+      script.onload = script.onerror = () => script.remove();
+      document.head.append(script);
+    }
+
+    function changed(stamp) {
+      if (stamp === version) return;
+      version = stamp;
+      load("current.js");
+    }
+
+    function poll() {
+      load("version.js");
+    }
+
+    // In a Firefox window (the new tab page) the screen-sized wallpaper is pinned to the desktop, so the window shows its slice of it
+    function align() {
+      const root = document.documentElement.style;
+      for (const [property, value] of [
+        ["--screen-x", screen.left - mozInnerScreenX],
+        ["--screen-y", screen.top - mozInnerScreenY],
+        ["--screen-width", screen.width],
+        ["--screen-height", screen.height],
+      ]) {
+        if (root.getPropertyValue(property) !== `${value}px`) root.setProperty(property, `${value}px`);
+      }
+    }
+
+    // The last list is kept so a new tab draws instantly instead of waiting on the network
+    function renderNews(stories) {
+      document.querySelector(".news ol").replaceChildren(...stories.map(story => {
+        const discussion = `https://news.ycombinator.com/item?id=${story.objectID}`;
+        const item = document.createElement("li");
+        const title = document.createElement("a");
+        title.className = "title";
+        title.href = story.url ?? discussion;
+        title.target = "_top";
+        title.textContent = story.title;
+        const meta = document.createElement("a");
+        meta.className = "meta";
+        meta.href = discussion;
+        meta.target = "_top";
+        meta.textContent = [story.url && new URL(story.url).hostname.replace(/^www\./, ""), `${story.num_comments ?? 0} comments`].filter(Boolean).join(" · ");
+        item.append(title, meta);
+        return item;
+      }));
+    }
+
+    async function refreshNews() {
+      const { hits } = await (await fetch("https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=30")).json();
+      renderNews(hits);
+      try { localStorage.setItem("news", JSON.stringify(hits)); } catch {}
+    }
+
+    tick();
+    poll();
+    setInterval(poll, 30000);
+    if ("mozInnerScreenX" in window) {
+      document.documentElement.classList.add("window");
+      align();
+      // Browsers have no event for a window moving, so its position is checked a few times a second rather than every frame
+      setInterval(align, 250);
+      addEventListener("resize", align);
+      try { renderNews(JSON.parse(localStorage.getItem("news")) ?? []); } catch {}
+      refreshNews().catch(() => {});
+      document.querySelector(".news button").addEventListener("click", event => {
+        const expanded = document.querySelector(".news").classList.toggle("expanded");
+        event.currentTarget.textContent = expanded ? "less ▴" : "more ▾";
+        document.querySelector(".news ol").scrollTop = 0;
+      });
+      setInterval(() => refreshNews().catch(() => {}), 600000);
+    }
+  </script>
+</body>
+</html>

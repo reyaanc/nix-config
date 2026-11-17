@@ -1,0 +1,9 @@
+user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
+user_pref("mail.threadpane.listview", 0);
+user_pref("mail.threadpane.cardsview.rowcount", 3);
+user_pref("mail.uifontsize", 14);
+user_pref("mail.addressDisplayFormat", 2);
+user_pref("mail.tabs.tabMinWidth", 50);
+user_pref("widget.macos.titlebar-blend-mode.behind-window", true);
+user_pref("calendar.alarms.show", false);
+user_pref("calendar.alarms.playsound", false);

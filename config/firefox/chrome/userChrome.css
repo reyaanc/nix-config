@@ -1,0 +1,83 @@
+/* github.com/miloszfalinski/liquid-fox chrome/userChrome.css @ 3dfcc8d */
+@import "liquid-fox.css";
+
+#identity-box.extensionPage {
+  display: none !important;
+}
+
+/* AeroSpace ignores window minimum sizes (nikitabobko/AeroSpace#121), so Firefox's 500px floor pushes narrower tiles off screen */
+:root {
+  --window-min-width: 400px !important;
+}
+
+:root:not([windowtype="Toolkit:PictureInPicture"], [inDOMFullscreen])::before {
+  background: light-dark(transparent, rgba(0, 0, 0, 0.08)) !important;
+}
+
+/* Firefox 158 only draws the macOS blur with browser.theme.native-theme on, which also swaps its palette for system colours.
+ * These are Firefox's own values from tokens-platform.css and tab.tokens.css (tokens-browser-theme + tokens-browser-theme-nova). */
+:root:is([theme-in-app], :not([lwtheme])) {
+  --background-color-dimmed: light-dark(color-mix(in srgb, currentColor 12%, transparent), color-mix(in srgb, currentColor 17%, transparent)) !important;
+  --background-color-dimmed-further: light-dark(color-mix(in srgb, currentColor 20%, transparent), color-mix(in srgb, currentColor 14%, transparent)) !important;
+
+  --button-background-color: light-dark(rgba(207, 207, 216, 0.33), rgba(0, 0, 0, 0.33)) !important;
+  --button-background-color-hover: light-dark(color-mix(in srgb, var(--color-accent-primary) 32%, transparent), color-mix(in srgb, var(--color-accent-primary) 55%, transparent)) !important;
+  --button-background-color-active: light-dark(color-mix(in srgb, var(--color-accent-primary) 50%, transparent), color-mix(in srgb, var(--color-accent-primary) 75%, transparent)) !important;
+  --button-background-color-ghost: var(--button-background-color) !important;
+  --button-border-color: var(--color-accent-primary) !important;
+  --button-text-color: light-dark(var(--color-violet-90), var(--color-gray-0)) !important;
+  --button-text-color-menu-selected: light-dark(var(--button-text-color-ghost-selected), var(--button-text-color-selected)) !important;
+  --button-text-color-primary: light-dark(var(--color-white), var(--color-gray-70)) !important;
+
+  --color-accent-attention: light-dark(var(--color-green-50), var(--color-green-20)) !important;
+  --color-accent-primary: light-dark(var(--color-violet-50), var(--color-violet-30)) !important;
+  --color-accent-primary-hover: light-dark(var(--color-violet-60), var(--color-violet-20)) !important;
+  --color-accent-primary-active: light-dark(var(--color-violet-70), var(--color-violet-10)) !important;
+  --color-accent-primary-selected: var(--button-background-color-primary-active) !important;
+
+  --info-bar-border-color: light-dark(var(--color-violet-desaturated-20), var(--color-gray-60)) !important;
+
+  --input-text-background-color: var(--background-color-box) !important;
+  --input-text-color: light-dark(rgb(21, 20, 26), rgb(251, 251, 254)) !important;
+
+  --link-color: var(--color-accent-primary) !important;
+  --link-color-hover: var(--color-accent-primary-hover) !important;
+  --link-color-active: var(--color-accent-primary-active) !important;
+
+  --panel-background-color: var(--popup-background-color) !important;
+  --panel-border-color: var(--popup-border-color) !important;
+  --panel-text-color: var(--text-color) !important;
+  --popup-border-color: var(--border-color-deemphasized) !important;
+
+  --sidebar-background-color: light-dark(white, rgb(28, 27, 34)) !important;
+  --sidebar-border-color: var(--chrome-content-separator-color) !important;
+  --sidebar-text-color: light-dark(rgb(21, 20, 26), rgb(249, 249, 250)) !important;
+
+  --tab-background-color-hover: var(--toolbarbutton-background-color-hover) !important;
+  --tab-text-color-selected: var(--toolbox-text-color) !important;
+
+  --text-color: light-dark(var(--color-violet-desaturated-90), var(--color-violet-desaturated-0)) !important;
+
+  --toolbar-background-color: light-dark(rgba(255, 255, 255, 0.4), rgba(0, 0, 0, 0.2)) !important;
+  --toolbar-field-background-color: var(--toolbar-background-color) !important;
+  --toolbar-field-background-color-focus: var(--background-color-box) !important;
+  --toolbar-field-border-color: light-dark(var(--color-gray-20), var(--color-gray-60)) !important;
+  --toolbar-field-border-color-focus: var(--focus-outline-color) !important;
+  --toolbar-field-text-color: light-dark(var(--color-violet-desaturated-70), var(--color-violet-desaturated-10)) !important;
+  --toolbar-field-text-color-focus: var(--toolbar-field-text-color) !important;
+  --toolbar-text-color: light-dark(var(--color-gray-100), var(--color-gray-0)) !important;
+
+  --toolbarbutton-background-color-hover: light-dark(rgba(117, 102, 159, 0.25), rgba(182, 170, 217, 0.25)) !important;
+  --toolbarbutton-background-color-active: light-dark(rgba(117, 102, 159, 0.4), rgba(182, 170, 217, 0.4)) !important;
+  --toolbarbutton-icon-fill: light-dark(var(--color-violet-desaturated-50), var(--color-violet-desaturated-10)) !important;
+  --toolbarbutton-icon-fill-attention: var(--color-accent-primary) !important;
+  --toolbarbutton-icon-fill-attention-text: light-dark(var(--color-gray-20), var(--color-gray-90)) !important;
+
+  --toolbox-text-color: var(--text-color) !important;
+  --toolbox-text-color-inactive: var(--toolbox-text-color) !important;
+}
+
+:root:is([theme-in-app], :not([lwtheme])) {
+  --tab-background-color: transparent !important;
+  --tab-background-color-selected: color-mix(in srgb, var(--color-accent-primary) 30%, transparent) !important;
+}

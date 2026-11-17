@@ -1,0 +1,302 @@
+@import url("theme.css");
+
+:root {
+  --layout-background-0: var(--theme-bg) !important;
+  --layout-background-1: var(--theme-bgDark) !important;
+  --layout-background-2: var(--theme-bgDark) !important;
+  --layout-background-3: var(--theme-bgHighlight) !important;
+  --layout-background-4: var(--theme-bgLight) !important;
+
+  --layout-color-0: var(--theme-fg) !important;
+  --layout-color-1: var(--theme-fg) !important;
+  --layout-color-2: var(--theme-fgDim) !important;
+  --layout-color-3: var(--theme-comment) !important;
+
+  --layout-border-0: var(--theme-bgDark) !important;
+  --layout-border-1: var(--theme-bgHighlight) !important;
+  --layout-border-2: var(--theme-border) !important;
+
+  --selected-item-color: color-mix(in srgb, var(--theme-blue) 25%, var(--theme-bg)) !important;
+  --selected-item-text-color: var(--theme-blue) !important;
+  --listbox-selected-bg: color-mix(in srgb, var(--theme-blue) 25%, var(--theme-bg)) !important;
+  --listbox-hover: var(--theme-bgHighlight) !important;
+
+  --treeitem-background-selected: color-mix(in srgb, var(--theme-blue) 25%, var(--theme-bg)) !important;
+  --treeitem-background-hover: var(--theme-bgHighlight) !important;
+  --treeitem-background-active: color-mix(in srgb, var(--theme-blue) 25%, var(--theme-bg)) !important;
+  --treeitem-text-active: var(--theme-blue) !important;
+  --folderpane-unread-count-background: transparent !important;
+  --folderpane-unread-count-text: var(--theme-fg) !important;
+
+  --button-border-color: transparent !important;
+  --button-border-radius: 18px !important;
+
+  --search-bar-border-color: transparent !important;
+  --search-bar-background: var(--theme-bgHighlight) !important;
+  --search-bar-focus-background: var(--theme-bgLight) !important;
+
+  --tabline-color: var(--theme-blue) !important;
+  --spaces-bg-color: rgba(19, 19, 20, 0.6) !important;
+  --spaces-bg-image: none !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+#folderTree li > .container {
+  border-radius: 0 16px 16px 0 !important;
+  margin-inline-end: 8px !important;
+}
+
+#folderTree li.selected > .container .name {
+  font-weight: 600 !important;
+}
+
+#folderTree > li[data-mode="smart"] > ul > li:not([data-folder-type="inbox"]) {
+  display: none !important;
+}
+
+#folderTree .mode-container > .mode-name {
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+  color: var(--theme-fgDim) !important;
+}
+
+#folderTree li > .container > .icon {
+  opacity: 0 !important;
+}
+
+#folderTree li > .container:hover > .icon,
+#folderTree li.selected > .container > .icon {
+  opacity: 1 !important;
+}
+
+.folder-count-badge {
+  font-size: 1em !important;
+}
+
+global-search-bar {
+  --button-border-radius: 24px !important;
+}
+
+#messengerWindow {
+  appearance: -moz-sidebar !important;
+}
+
+#navigation-toolbox {
+  background-color: rgba(19, 19, 20, 0.6) !important;
+}
+
+#tabs-toolbar {
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: inset 0 -1px var(--theme-bgHighlight) !important;
+}
+
+.tabmail-tab {
+  container-type: inline-size !important;
+}
+
+.tabmail-tab:not([selected]) {
+  color: var(--theme-fgDim) !important;
+}
+
+.tabmail-tab[selected] {
+  min-inline-size: 120px !important;
+  box-shadow: none !important;
+  color: var(--theme-blue) !important;
+}
+
+.tab-label-container:not([selected]) {
+  opacity: 1 !important;
+}
+
+.tab-background {
+  justify-content: flex-end !important;
+}
+
+.tab-background[selected] {
+  background-color: transparent !important;
+}
+
+.tab-line {
+  block-size: 3px !important;
+}
+
+@container (max-width: 80px) {
+  .tab-label-container {
+    display: none !important;
+  }
+
+  .tab-content {
+    justify-content: center !important;
+  }
+
+  .tab-icon-image {
+    margin-inline-end: 0 !important;
+  }
+}
+
+@container threadPane (max-width: 999px) {
+  #threadPaneQuickFilterButton {
+    padding-inline-end: 0 !important;
+  }
+
+  #threadPaneQuickFilterButton > span {
+    display: inline-block !important;
+    visibility: hidden !important;
+    inline-size: 0 !important;
+  }
+}
+
+#threadTree {
+  --new-subject-color: var(--theme-blue) !important;
+  --new-color: var(--theme-blue) !important;
+}
+
+#threadTree .card-layout > td {
+  padding: 0 !important;
+}
+
+#threadTree .card-layout > td > .card-container {
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: inset 0 -1px var(--theme-bgLight) !important;
+}
+
+#threadTree .card-layout :is(.sender, .date) {
+  font-size: 1rem !important;
+}
+
+#threadTree .card-layout .date {
+  opacity: 1 !important;
+}
+
+#threadTree .card-layout:not([data-properties~="unread"]) .sender {
+  font-weight: 400 !important;
+}
+
+#threadTree .card-layout:not([data-properties~="unread"]) .card-container {
+  color: var(--theme-fgDim) !important;
+}
+
+#threadTree .card-layout[data-properties~="unread"] .card-container {
+  color: var(--theme-fg) !important;
+}
+
+#threadTree .card-layout[data-properties~="unread"] {
+  --read-status-fill: var(--theme-blue) !important;
+  --read-status-stroke: var(--theme-blue) !important;
+}
+
+#threadTree .card-layout:not(.selected):hover {
+  --tree-card-background: var(--theme-bgHighlight) !important;
+}
+
+#threadTree .card-layout.selected {
+  --tree-card-background: color-mix(in srgb, var(--theme-blue) 25%, var(--theme-bg)) !important;
+}
+
+#threadTree .card-layout.selected .card-container {
+  color: var(--theme-blue) !important;
+}
+
+#messagepanebox,
+#mail-notification-top > .notificationbox-stack,
+#attachmentBar {
+  background-color: var(--theme-bg) !important;
+}
+
+#messagepanebox {
+  --toolbarbutton-header-bordercolor: transparent !important;
+  --toolbarbutton-hover-bordercolor: transparent !important;
+  --toolbarbutton-active-bordercolor: transparent !important;
+  --toolbarbutton-background-color-hover: var(--theme-bgLight) !important;
+}
+
+#mail-notification-top {
+  border-block-end: none !important;
+}
+
+#messageHeader {
+  --message-header-label-opacity: 1 !important;
+  padding: 16px 16px 8px !important;
+  row-gap: 8px !important;
+}
+
+.message-header-large-subject #expandedsubjectBox {
+  font-size: 1.6em !important;
+  font-weight: 400 !important;
+  line-height: 1.3 !important;
+}
+
+.recipient-multi-line-address {
+  opacity: 1 !important;
+  color: var(--theme-fgDim) !important;
+}
+
+.message-header-view-button {
+  border-color: transparent !important;
+  background-color: transparent !important;
+  border-radius: 18px !important;
+  min-block-size: 32px !important;
+}
+
+.message-header-view-button:not([disabled]):is(:hover, [open]) {
+  background-color: var(--theme-bgLight) !important;
+}
+
+.message-header-view-button:not([is="toolbarbutton-menu-button"]),
+.message-header-view-button > .toolbarbutton-menubutton-button {
+  padding-inline: 10px !important;
+}
+
+.message-header-buttons-only-icons .message-header-view-button:not([is="toolbarbutton-menu-button"]) {
+  min-inline-size: 36px !important;
+  min-block-size: 36px !important;
+  padding: 0 !important;
+  justify-content: center !important;
+}
+
+#starMessageButton {
+  padding: 6px !important;
+  border-radius: 50% !important;
+}
+
+#starMessageButton:hover {
+  background-color: var(--theme-bgLight) !important;
+}
+
+#messagepane {
+  margin-inline: 8px !important;
+}
+
+#mail-notification-top notification-message {
+  margin: 0 16px 8px !important;
+}
+
+#mail-notification-top .notification-button {
+  border-radius: 18px !important;
+}
+
+notification-message[type="warning"] {
+  --message-bar-background-color: var(--theme-bgHighlight) !important;
+  --message-bar-text-color: var(--theme-fg) !important;
+  --button-background-color: var(--theme-bgLight) !important;
+  --button-hover-background-color: var(--theme-border) !important;
+  --button-border-color: transparent !important;
+}
+
+menupopup:not(.autoscroller),
+panel:not(.autoscroller) {
+  --panel-background-color: var(--theme-bgHighlight) !important;
+  --panel-text-color: var(--theme-fg) !important;
+  --panel-border-color: var(--theme-border) !important;
+}
+
+.statusbar {
+  background-color: rgba(19, 19, 20, 0.6) !important;
+  text-shadow: none !important;
+}
+
+#status-bar {
+  color: var(--theme-fgDim) !important;
+}

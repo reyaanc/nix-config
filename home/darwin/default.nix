@@ -1,0 +1,19 @@
+{
+  imports = [
+    ./packages.nix
+    ./homebrew.nix
+    ./git.nix
+    ./ghostty.nix
+    ./zed.nix
+    ./claude.nix
+    ./omniwm.nix
+    ./sketchybar.nix
+    ./wallpaper.nix
+    ./herdr.nix
+    ./openlogi.nix
+    ./firefox.nix
+    ./thunderbird.nix
+    ./marta.nix
+    ./folders.nix
+  ];
+}
