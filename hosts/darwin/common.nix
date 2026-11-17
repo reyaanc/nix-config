@@ -2,15 +2,19 @@
 {
   environment.shells = [ pkgs.fish ];
 
+  users.users.reyaan.home = "/Users/reyaan";
+
   security.pam.services.sudo_local.touchIdAuth = true;
 
-  system.defaults.spaces.spans-displays = false;
-
-  system.defaults.dock = {
-    tilesize = 1;
-    orientation = "right";
-    autohide = true;
-    autohide-delay = 100000000.0;
+  system = {
+    primaryUser = "reyaan";
+    defaults.spaces.spans-displays = false;
+    defaults.dock = {
+      tilesize = 1;
+      orientation = "right";
+      autohide = true;
+      autohide-delay = 100000000.0;
+    };
   };
 
   homebrew = {

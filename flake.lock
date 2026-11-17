@@ -61,8 +61,7 @@
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs",
-        "spicetify-nix": "spicetify-nix",
-        "work": "work"
+        "spicetify-nix": "spicetify-nix"
       }
     },
     "spicetify-nix": {
@@ -99,18 +98,6 @@
         "owner": "nix-systems",
         "repo": "default",
         "type": "github"
-      }
-    },
-    "work": {
-      "locked": {
-        "lastModified": 1794942898,
-        "narHash": "sha256-0SzI0CwSR3xuWi8hAk3+kyekPb5FOgB7MvOKh05ACIM=",
-        "path": "/Users/reyaan/Personal/nix-work",
-        "type": "path"
-      },
-      "original": {
-        "path": "/Users/reyaan/Personal/nix-work",
-        "type": "path"
       }
     }
   },

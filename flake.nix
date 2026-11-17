@@ -9,14 +9,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    work.url = "path:/Users/reyaan/Personal/nix-work";
     spicetify-nix = {
       url = "github:Gerg-L/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = inputs@{ nixpkgs, nix-darwin, home-manager, spicetify-nix, ... }:
+  outputs = { self, nixpkgs, nix-darwin, home-manager, spicetify-nix, ... }:
   let
     home = [
       ./home/common
@@ -24,12 +23,19 @@
     ];
   in
   {
-    darwinConfigurations.MacBook-Pro = nix-darwin.lib.darwinSystem {
-      specialArgs = { inherit inputs; };
-      modules = [
-        ./hosts/darwin/work
+    darwinModules.default = {
+      imports = [
+        ./hosts/common.nix
+        ./hosts/darwin/common.nix
         home-manager.darwinModules.home-manager
-        { home-manager.users.reyaan.imports = home ++ [ ./home/darwin ]; }
+      ];
+      home-manager.users.reyaan.imports = home ++ [ ./home/darwin ];
+    };
+
+    darwinConfigurations.personal = nix-darwin.lib.darwinSystem {
+      modules = [
+        self.darwinModules.default
+        ./hosts/darwin/personal
       ];
     };
 

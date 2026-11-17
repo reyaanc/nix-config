@@ -1,15 +1,11 @@
 # New Linux box
 
-Install NixOS from the ISO as normal, then boot into it and log in as root.
-
-Clone to exactly this path, since the config symlinks point here:
-
 ```sh
 nix-shell -p git
 git clone https://github.com/reyaanc/nix-config.git /home/reyaan/Personal/nix-config
 ```
 
-The installer generated a hardware config for this machine. Copy it in and `git add` it, because flakes ignore untracked files:
+Copy generated hardware configuration in and `git add` it, because flakes ignore untracked files:
 
 ```sh
 cd /home/reyaan/Personal/nix-config
@@ -27,6 +23,5 @@ After that it's just `sudo nixos-rebuild switch --flake ~/Personal/nix-config`.
 
 ## By hand
 
-- The config doesn't set a password for `reyaan`, so run `passwd reyaan` before you log out of root.
-- `chown -R reyaan /home/reyaan/Personal` so the clone isn't owned by root.
-- Hyprland starts with its default config, so bind Vicinae (`vicinae toggle`) to a key yourself.
+- run `passwd reyaan` before logging out 
+- `chown -R reyaan /home/reyaan/Personal`

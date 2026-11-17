@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: cachix/install-nix-action@v31
-      - run: nix build .#darwinConfigurations.MacBook-Pro.system --override-input work ./ci/work
+      - run: nix build .#darwinConfigurations.personal.system
 
   linux:
     runs-on: ubuntu-latest
@@ -30,4 +30,4 @@ jobs:
       - run: |
           cp ci/hardware-configuration.nix hosts/linux/personal/
           git add hosts/linux/personal/hardware-configuration.nix
-      - run: nix eval --raw .#nixosConfigurations.linux.config.system.build.toplevel.drvPath --override-input work ./ci/work
+      - run: nix eval --raw .#nixosConfigurations.linux.config.system.build.toplevel.drvPath
