@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: cachix/install-nix-action@v31
+      - run: nix run nixpkgs#statix -- check .
+      - run: nix run nixpkgs#deadnix -- --fail .
+
+  darwin:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: cachix/install-nix-action@v31
+      - run: nix build .#darwinConfigurations.MacBook-Pro.system --override-input work ./ci/work
+
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: cachix/install-nix-action@v31
+      - run: |
+          cp ci/hardware-configuration.nix hosts/linux/personal/
+          git add hosts/linux/personal/hardware-configuration.nix
+      - run: nix eval --raw .#nixosConfigurations.linux.config.system.build.toplevel.drvPath --override-input work ./ci/work
