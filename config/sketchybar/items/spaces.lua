@@ -253,6 +253,31 @@ local function draw(windows, workspaces)
   end
 end
 
+-- Reading profiles means a Python start and a SQLite read, so it only happens when a Firefox process comes or goes.
+local firefox_pids
+local function update_avatars(windows)
+  local pids, seen = {}, {}
+  for _, window in ipairs(windows) do
+    if window.app == "Firefox" and not seen[window.pid] then
+      seen[window.pid] = true
+      table.insert(pids, window.pid)
+    end
+  end
+  table.sort(pids)
+  local key = table.concat(pids, " ")
+  if key == firefox_pids then return end
+  firefox_pids = key
+
+  sbar.exec("$CONFIG_DIR/helpers/firefox.py " .. key, function(output)
+    if output == avatars_text then return end
+    avatars, avatars_text = {}, output
+    for pid, avatar in output:gmatch("(%d+)|([^\n]+)") do
+      avatars[pid] = avatar
+    end
+    render()
+  end)
+end
+
 local query = "aerospace list-windows --all --format '%{window-id}|%{workspace}|%{app-pid}|%{app-name}|%{window-title}'"
   .. " && echo --- && aerospace list-workspaces --all --format '%{workspace}|%{monitor-is-main}|%{workspace-is-focused}'"
 
@@ -277,6 +302,7 @@ function render()
       for ws, main, focused in workspace_lines:gmatch("([^|\n]+)|(%a+)|(%a+)") do
         workspaces[ws] = { main = main == "true", focused = focused == "true" }
       end
+      update_avatars(windows)
       draw(windows, workspaces)
     end
 
@@ -340,24 +366,12 @@ local function update_badges()
   end)
 end
 
-local function update_avatars()
-  sbar.exec("$CONFIG_DIR/helpers/firefox.py", function(output)
-    if output == avatars_text then return end
-    avatars, avatars_text = {}, output
-    for pid, avatar in output:gmatch("(%d+)|([^\n]+)") do
-      avatars[pid] = avatar
-    end
-    render()
-  end)
-end
-
 local observer = sbar.add("item", "spaces.observer", { drawing = false, updates = true, update_freq = 15 })
 
 observer:subscribe("forced", function()
   render()
   update_positions()
   update_badges()
-  update_avatars()
 end)
 observer:subscribe("routine", function()
   update_positions()
@@ -370,7 +384,6 @@ end)
 observer:subscribe("space_windows_change", function()
   render()
   update_positions()
-  update_avatars()
 end)
 observer:subscribe("aerospace_mode_change", update_positions)
 observer:subscribe("display_change", render)

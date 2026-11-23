@@ -1,5 +1,3 @@
 result
 .DS_Store
 __pycache__/
-config/sketchybar/helpers/audio_output
-config/sketchybar/helpers/window_positions
