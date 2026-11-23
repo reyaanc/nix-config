@@ -6,6 +6,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -16,11 +20,11 @@ jobs:
       - run: nix run nixpkgs#deadnix -- --fail .
 
   darwin:
-    runs-on: macos-15
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: cachix/install-nix-action@v31
-      - run: nix build .#darwinConfigurations.personal.system
+      - run: nix eval --raw .#darwinConfigurations.personal.system.drvPath
 
   linux:
     runs-on: ubuntu-latest

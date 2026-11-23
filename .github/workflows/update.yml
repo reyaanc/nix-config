@@ -11,10 +11,49 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      issues: write
+    env:
+      GH_TOKEN: ${{ secrets.FLAKE_UPDATE_TOKEN || github.token }}
     steps:
       - uses: actions/checkout@v5
       - uses: cachix/install-nix-action@v31
-      - uses: DeterminateSystems/update-flake-lock@main
+      - run: |
+          cp flake.lock "$RUNNER_TEMP/old.lock"
+          ci/versions.sh > "$RUNNER_TEMP/old.json"
+      - id: update
+        uses: DeterminateSystems/update-flake-lock@main
         with:
           pr-title: "Update flake.lock"
           token: ${{ secrets.FLAKE_UPDATE_TOKEN || github.token }}
+      - id: diff
+        if: steps.update.outputs.pull-request-number
+        env:
+          PR: ${{ steps.update.outputs.pull-request-number }}
+        run: |
+          git fetch origin "$(gh pr view "$PR" --json headRefName --jq .headRefName)"
+          git checkout FETCH_HEAD
+          ci/versions.sh > "$RUNNER_TEMP/new.json"
+          level=$(python3 ci/bump.py "$RUNNER_TEMP/old.json" "$RUNNER_TEMP/new.json" "$RUNNER_TEMP/old.lock" flake.lock "$RUNNER_TEMP/diff.md")
+          gh label create "bump:$level" --force
+          gh label create needs-review --force
+          gh pr edit "$PR" --add-label "bump:$level"
+          gh pr comment "$PR" --body-file "$RUNNER_TEMP/diff.md"
+          echo "level=$level" >> "$GITHUB_OUTPUT"
+      - if: steps.update.outputs.pull-request-number
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.FLAKE_UPDATE_TOKEN || github.token }}
+          prompt: |
+            PR #${{ steps.update.outputs.pull-request-number }} in ${{ github.repository }} bumps flake.lock for a personal nix-darwin, NixOS and home-manager config, checked out here. It is labelled bump:${{ steps.diff.outputs.level }}. Its comments hold a package version diff and compare links for each changed input; read them with `gh pr view ${{ steps.update.outputs.pull-request-number }} --comments`.
+
+            Look for changes likely to break or surprise this config: major bumps of tools it configures, changed defaults, removed or renamed options, and deprecations in nix-darwin or home-manager. Check release notes and the compare links where it matters.
+
+            Post one short comment with what you found. If anything is risky, also run `gh pr edit ${{ steps.update.outputs.pull-request-number }} --add-label needs-review`.
+          claude_args: >-
+            --allowedTools "Read,Grep,Glob,WebFetch,Bash(gh pr view:*),Bash(gh pr comment ${{ steps.update.outputs.pull-request-number }}:*),Bash(gh pr edit ${{ steps.update.outputs.pull-request-number }} --add-label needs-review)"
+      - if: steps.update.outputs.pull-request-number && contains(fromJSON('["none", "patch", "minor"]'), steps.diff.outputs.level)
+        env:
+          PR: ${{ steps.update.outputs.pull-request-number }}
+        run: |
+          gh pr view "$PR" --json labels --jq '.labels[].name' | grep -qx needs-review || gh pr merge "$PR" --auto --squash
