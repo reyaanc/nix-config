@@ -323,6 +323,18 @@ in
       };
       model = "opus";
       hooks = {
+        PreToolUse = [
+          {
+            matcher = "Bash";
+            hooks = [
+              {
+                type = "command";
+                command = "${lib.getExe pkgs.python3} ${../../config/claude/hooks/guard.py}";
+                timeout = 10;
+              }
+            ];
+          }
+        ];
         SessionStart = [
           {
             matcher = "^(startup|resume|clear|compact|fork)$";
@@ -346,6 +358,7 @@ in
         "rust-analyzer-lsp@claude-plugins-official" = true;
         "pyright-lsp@claude-plugins-official" = true;
         "typescript-lsp@claude-plugins-official" = true;
+        "context7@claude-plugins-official" = true;
       };
       sandbox = {
         enabled = true;

@@ -29,14 +29,12 @@
     };
 
     taps = [
-      "felixkratz/formulae"
       "penso/tap"
     ];
 
     brews = [
       "basis_universal"
       "herdr"
-      "felixkratz/formulae/sketchybar"
     ];
 
     casks = [
