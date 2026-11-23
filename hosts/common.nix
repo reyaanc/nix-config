@@ -19,5 +19,6 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
+    backupFileExtension = "pre-nix";
   };
 }
