@@ -19,7 +19,7 @@ The host is called `linux` for now. Rename `networking.hostName` in `personal/de
 nixos-rebuild switch --flake .#linux
 ```
 
-After that it's just `sudo nixos-rebuild switch --flake ~/Personal/nix-config`.
+After that, `rebuild`, `update` and `rollback` work the same as on the Macs.
 
 ## By hand
 

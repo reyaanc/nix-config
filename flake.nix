@@ -36,6 +36,7 @@
       modules = [
         self.darwinModules.default
         ./hosts/darwin/personal
+        { home-manager.users.reyaan.rebuild.host = "personal"; }
       ];
     };
 
@@ -43,7 +44,12 @@
       modules = [
         ./hosts/linux/personal
         home-manager.nixosModules.home-manager
-        { home-manager.users.reyaan.imports = home ++ [ ./home/linux ]; }
+        {
+          home-manager.users.reyaan = {
+            imports = home ++ [ ./home/linux ];
+            rebuild.host = "linux";
+          };
+        }
       ];
     };
   };

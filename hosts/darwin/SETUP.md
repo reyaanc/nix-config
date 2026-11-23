@@ -26,13 +26,17 @@ First switch. If it complains about other files in `/etc`, rename them the same 
 sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake ~/Personal/nix-config#personal
 ```
 
-A work Mac switches from `nix-work` instead, which pulls in this repo and adds the work bits:
+Anything that needs work stuff switches from `nix-work` instead, which pulls in this repo and adds the work bits. That's `MacBook-Pro` for the work laptop and `home` for the home laptop:
 
 ```sh
-sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake ~/Personal/nix-work#MacBook-Pro
+sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake ~/Personal/nix-work#home --override-input nix-config ~/Personal/nix-config
 ```
 
-After that it's `sudo darwin-rebuild switch --flake ~/Personal/nix-config#personal`, or `~/Personal/nix-work#MacBook-Pro` on a work Mac. On a work Mac, run `nix flake update nix-config` in `nix-work` first so it picks up changes here.
+After that every machine has the same three commands, which already know their own flake and host:
+
+- `rebuild` applies local changes
+- `update` pulls `nix-config` and rebuilds
+- `rollback` goes back one generation
 
 ## By hand
 

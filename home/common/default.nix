@@ -19,6 +19,7 @@
     ./spicetify.nix
     ./vicinae.nix
     ./claude.nix
+    ./nh.nix
   ];
 
   home.stateVersion = "26.05";
