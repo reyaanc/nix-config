@@ -40,9 +40,9 @@ volume:subscribe("audio_update", function(env)
 end)
 
 volume:subscribe("mouse.scrolled", function(env)
-  sbar.exec("osascript -e 'set volume output volume (output volume of (get volume settings)) + " .. env.INFO.delta * 2 .. "'")
+  sbar.exec("$CONFIG_DIR/helpers/volume/bin/volume step " .. env.INFO.delta * 2)
 end)
 
 volume:subscribe("mouse.clicked", function()
-  sbar.exec("osascript -e 'set volume output muted (not output muted of (get volume settings))'")
+  sbar.exec("$CONFIG_DIR/helpers/volume/bin/volume mute")
 end)

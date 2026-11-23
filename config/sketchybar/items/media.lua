@@ -51,51 +51,60 @@ local function percentage(position, duration)
   return position * 100 // math.max(duration, 1)
 end
 
+local function show(state, track, position, duration)
+  if state == "playing" then
+    title:set({ drawing = true, update_freq = 5, label = { string = track, color = colors.subtext } })
+    icon:set({ drawing = true, icon = { string = icons.media.play, font = { size = 14 }, color = colors.blue } })
+    progress:set({ slider = { highlight_color = colors.blue } })
+  elseif state == "paused" then
+    title:set({ drawing = true, update_freq = 0, label = { string = track, color = colors.grey } })
+    icon:set({ drawing = true, icon = { string = icons.media.pause, font = { size = 13 }, color = colors.grey } })
+    progress:set({ slider = { highlight_color = colors.grey } })
+  else
+    playback = nil
+    title:set({ drawing = false, update_freq = 0 })
+    icon:set({ drawing = false })
+    progress:set({ drawing = false })
+    return
+  end
+
+  playback = { read_at = os.time(), position = position, duration = duration }
+  progress:set({ drawing = true, slider = { percentage = percentage(position, duration) } })
+end
+
+-- Spotify only announces changes, so its state is read directly once, when the bar starts.
 local function query()
   sbar.exec(status_script, function(status)
     local state, position, duration, track = status:match("^(%a+)|(%d+)|(%d+)|(.-)%s*$")
-    position, duration = tonumber(position), tonumber(duration)
-
-    if state == "playing" then
-      title:set({ drawing = true, update_freq = 5, label = { string = track, color = colors.subtext } })
-      icon:set({ drawing = true, icon = { string = icons.media.play, font = { size = 14 }, color = colors.blue } })
-      progress:set({ slider = { highlight_color = colors.blue } })
-    elseif state == "paused" then
-      title:set({ drawing = true, update_freq = 0, label = { string = track, color = colors.grey } })
-      icon:set({ drawing = true, icon = { string = icons.media.pause, font = { size = 13 }, color = colors.grey } })
-      progress:set({ slider = { highlight_color = colors.grey } })
-    else
-      playback = nil
-      title:set({ drawing = false, update_freq = 0 })
-      icon:set({ drawing = false })
-      progress:set({ drawing = false })
-      return
-    end
-
-    playback = { read_at = os.time(), position = position, duration = duration }
-    progress:set({ drawing = true, slider = { percentage = percentage(position, duration) } })
+    show(state, track, tonumber(position), tonumber(duration))
   end)
 end
 
 local function click(env)
   local command = env.BUTTON == "right" and "next track" or "playpause"
-  sbar.exec("osascript -e 'tell application \"Spotify\" to " .. command .. "'", query)
+  sbar.exec("osascript -e 'tell application \"Spotify\" to " .. command .. "'")
 end
 
--- Spotify posts no notification for seeks or for time passing, so between reads the bar extrapolates from the last one,
--- asking Spotify again only every 30s to pick up a seek.
-title:subscribe("routine", function()
-  if playback and os.time() - playback.read_at < 30 then
-    local position = (os.time() - playback.read_at) * 1000 + playback.position
-    sbar.animate("linear", 30, function()
-      progress:set({ slider = { percentage = percentage(position, playback.duration) } })
-    end)
-  else
-    query()
-  end
+title:subscribe("forced", query)
+
+title:subscribe("spotify_change", function(env)
+  local info = env.INFO
+  if type(info) ~= "table" or not info["Player State"] then return query() end
+  show(info["Player State"]:lower(),
+       (info.Name or "") .. " — " .. (info.Artist or ""),
+       math.floor((info["Playback Position"] or 0) * 1000),
+       info.Duration or 0)
 end)
 
-title:subscribe({ "forced", "spotify_change" }, query)
+-- Spotify posts nothing as time passes, so the bar moves the progress on from the last state it announced.
+title:subscribe("routine", function()
+  if not playback then return end
+  local position = (os.time() - playback.read_at) * 1000 + playback.position
+  sbar.animate("linear", 30, function()
+    progress:set({ slider = { percentage = percentage(position, playback.duration) } })
+  end)
+end)
+
 title:subscribe("mouse.clicked", click)
 icon:subscribe("mouse.clicked", click)
 
