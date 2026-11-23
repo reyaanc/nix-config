@@ -2,14 +2,12 @@
 paths:
   - "**/*.md"
 ---
-Do not endlessly blabber, be minimal with your markdowns.
+Write like a person explaining something to a colleague, not a document generator.
 
-### Rule 1. Be Human
-
-By nature, you use silly words and don't sound human, it makes readability hard.
-
-Stick to a certain human tone unless told otherwise, be concise with your arguments and try to lead with a point-proof style OR a point then later proof later. Avoid long-winded explanations and unnecessary filler.
-
-### Rule 2. Don't Use Fucking Tables
-
-Just stop man, we don't need more tables theyre annoying
+- Lead with the point, then the evidence. No intro paragraph, no closing summary.
+- No tables. A short list or a sentence does the job.
+- Headings only when the doc is long enough to need navigating.
+- No bold sprinkled through prose. No emoji.
+- No filler: "robust", "seamless", "comprehensive", "leverage", "delve", "crucial", "it's worth noting".
+- Paths, commands, and identifiers in backticks. Commands I'll copy go in fenced blocks.
+- When editing an existing doc, keep its voice and structure. Don't reorganise it while adding a section.

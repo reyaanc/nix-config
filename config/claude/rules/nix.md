@@ -1,0 +1,11 @@
+---
+paths:
+  - "**/*.nix"
+  - "**/flake.lock"
+---
+- Flakes only see files git knows about. A new file is invisible to `nix build .#...` until it's staged, and staging is mine. Build with `path:.#...` instead, and tell me which files need `git add`.
+- Prove a change with `nix build` or `nix eval` on the output it affects. Never `switch`; activation is mine.
+- Lint with `statix check .` and `nix run nixpkgs#deadnix -- --fail .` when the repo's CI runs them.
+- `nix flake update` only the inputs I named. Never bump the whole lock as a side effect.
+- Look up option names and package attributes with `nix eval` or `nix search` instead of guessing. home-manager and nix-darwin options drift.
+- `inherit` over `x = x;`, `lib` functions over hand-rolled recursion.

@@ -28,19 +28,21 @@ in
       inherit (cfg) flake;
     };
 
-    programs.fish.functions = {
-      rebuild = "${nh} switch ${cfg.flake} -H ${cfg.host} $argv --${overrides}";
-      rollback =
-        if pkgs.stdenv.hostPlatform.isDarwin then "sudo darwin-rebuild --rollback" else "sudo nixos-rebuild switch --rollback";
-      update = ''
+    home.packages = [
+      (pkgs.writeShellScriptBin "rebuild" ''
+        exec ${nh} switch ${cfg.flake} -H ${cfg.host} "$@" --${overrides}
+      '')
+      (pkgs.writeShellScriptBin "rollback" (
+        if pkgs.stdenv.hostPlatform.isDarwin then "exec sudo darwin-rebuild --rollback" else "exec sudo nixos-rebuild switch --rollback"
+      ))
+      (pkgs.writeShellScriptBin "update" (''
+        set -e
         git -C ${checkout} pull --ff-only
-        or return
       '' + lib.optionalString (cfg.updateInputs != [ ]) ''
         nix flake update ${lib.concatStringsSep " " cfg.updateInputs} --flake ${cfg.flake}
-        or return
       '' + ''
-        rebuild $argv
-      '';
-    };
+        exec rebuild "$@"
+      ''))
+    ];
   };
 }

@@ -1,4 +1,4 @@
-{ config, lib, dotfile, ... }:
+{ config, lib, pkgs, dotfile, ... }:
 let
   t = config.theme;
   c = t.colors;
@@ -34,9 +34,17 @@ in
           "Bash(git branch:*)"
           "Bash(git stash:*)"
           "Bash(git fetch:*)"
+          "Bash(git show:*)"
+          "Bash(git blame:*)"
           "Bash(ls:*)"
           "Bash(cat:*)"
+          "Bash(head:*)"
+          "Bash(tail:*)"
+          "Bash(wc:*)"
+          "Bash(diff:*)"
           "Bash(rg:*)"
+          "Bash(fd:*)"
+          "Bash(jq:*)"
           "Bash(find:*)"
           "Bash(mkdir:*)"
           "Bash(mv:*)"
@@ -46,6 +54,50 @@ in
           "Bash(ruff:*)"
           "Bash(python:*)"
           "Bash(make:*)"
+          "Bash(cargo check:*)"
+          "Bash(cargo clippy:*)"
+          "Bash(cargo test:*)"
+          "Bash(cargo build:*)"
+          "Bash(cargo fmt:*)"
+          "Bash(cargo tree:*)"
+          "Bash(cargo metadata:*)"
+          "Bash(npm test:*)"
+          "Bash(npm ls:*)"
+          "Bash(nix build:*)"
+          "Bash(nix eval:*)"
+          "Bash(nix flake check:*)"
+          "Bash(nix flake show:*)"
+          "Bash(nix flake metadata:*)"
+          "Bash(nix search:*)"
+          "Bash(nix log:*)"
+          "Bash(statix:*)"
+          "Bash(gh pr view:*)"
+          "Bash(gh pr list:*)"
+          "Bash(gh pr diff:*)"
+          "Bash(gh pr checks:*)"
+          "Bash(gh run view:*)"
+          "Bash(gh run list:*)"
+          "Bash(gh issue view:*)"
+          "Bash(gh issue list:*)"
+          "Bash(gh repo view:*)"
+          "Bash(docker ps:*)"
+          "Bash(docker logs:*)"
+          "Bash(docker images:*)"
+          "Bash(docker inspect:*)"
+          "Bash(kubectl get:*)"
+          "Bash(kubectl describe:*)"
+          "Bash(kubectl logs:*)"
+          "Bash(kubectl diff:*)"
+          "Bash(helm list:*)"
+          "Bash(helm template:*)"
+          "Bash(terraform fmt:*)"
+          "Bash(terraform validate:*)"
+          "Bash(terraform plan:*)"
+          "Bash(terraform show:*)"
+          "Bash(aws sts get-caller-identity:*)"
+          "Bash(aws * describe-*)"
+          "Bash(aws * list-*)"
+          "Bash(aws s3 ls:*)"
         ];
         deny = [
           "Bash(git push)"
@@ -58,7 +110,71 @@ in
           "Bash(git -C * commit *)"
           "Bash(gh pr create:*)"
           "Bash(gh pr merge:*)"
+          "Bash(gh pr close:*)"
+          "Bash(gh pr comment:*)"
+          "Bash(gh pr review:*)"
+          "Bash(gh pr edit:*)"
+          "Bash(gh issue create:*)"
+          "Bash(gh issue comment:*)"
+          "Bash(gh issue close:*)"
+          "Bash(gh issue edit:*)"
           "Bash(gh release create:*)"
+          "Bash(gh repo create:*)"
+          "Bash(gh repo delete:*)"
+          "Bash(gh workflow run:*)"
+          "Bash(gh run rerun:*)"
+          "Bash(gh secret set:*)"
+          "Bash(gh variable set:*)"
+          "Bash(terraform apply:*)"
+          "Bash(terraform destroy:*)"
+          "Bash(terraform import:*)"
+          "Bash(terraform taint:*)"
+          "Bash(terraform force-unlock:*)"
+          "Bash(terraform state rm:*)"
+          "Bash(terraform state mv:*)"
+          "Bash(terraform state push:*)"
+          "Bash(terraform -chdir=* apply*)"
+          "Bash(terraform -chdir=* destroy*)"
+          "Bash(tofu apply:*)"
+          "Bash(tofu destroy:*)"
+          "Bash(kubectl apply:*)"
+          "Bash(kubectl create:*)"
+          "Bash(kubectl delete:*)"
+          "Bash(kubectl patch:*)"
+          "Bash(kubectl edit:*)"
+          "Bash(kubectl replace:*)"
+          "Bash(kubectl scale:*)"
+          "Bash(kubectl set:*)"
+          "Bash(kubectl label:*)"
+          "Bash(kubectl annotate:*)"
+          "Bash(kubectl drain:*)"
+          "Bash(kubectl cordon:*)"
+          "Bash(kubectl rollout restart:*)"
+          "Bash(kubectl rollout undo:*)"
+          "Bash(helm install:*)"
+          "Bash(helm upgrade:*)"
+          "Bash(helm uninstall:*)"
+          "Bash(helm rollback:*)"
+          "Bash(aws * create-*)"
+          "Bash(aws * delete-*)"
+          "Bash(aws * put-*)"
+          "Bash(aws * update-*)"
+          "Bash(aws * modify-*)"
+          "Bash(aws * terminate-*)"
+          "Bash(aws * invoke*)"
+          "Bash(aws s3 rm:*)"
+          "Bash(aws s3 rb:*)"
+          "Bash(aws s3 mv:*)"
+          "Bash(aws s3 cp * s3://*)"
+          "Bash(aws s3 sync * s3://*)"
+          "Bash(docker push:*)"
+          "Bash(npm publish:*)"
+          "Bash(cargo publish:*)"
+          "Bash(uv publish:*)"
+          "Bash(darwin-rebuild switch:*)"
+          "Bash(nixos-rebuild switch:*)"
+          "Bash(home-manager switch:*)"
+          "Bash(nh * switch*)"
           "Read(./.env)"
           "Read(./.env.*)"
           "Read(./**/.env)"
@@ -85,14 +201,14 @@ in
           "mcp__claude_ai_Slack__slack_create_conversation"
           "mcp__claude_ai_Slack__slack_get_file_upload_url"
           "mcp__claude_ai_Slack__slack_complete_file_upload"
+          "mcp__claude_ai_Slack__slack_add_list_comment"
+          "mcp__claude_ai_Slack__slack_update_list_comment"
         ];
         ask = [
           "Bash(git reset --hard:*)"
           "Bash(git clean -fd:*)"
-          "Bash(docker push:*)"
-          "Bash(terraform apply:*)"
-          "Bash(kubectl apply:*)"
-          "Bash(kubectl delete:*)"
+          "Bash(kubectl exec:*)"
+          "Bash(aws secretsmanager get-secret-value:*)"
         ];
         defaultMode = "auto";
         disableBypassPermissionsMode = "disable";
@@ -119,13 +235,37 @@ in
       enabledPlugins = {
         "swift-lsp@claude-plugins-official" = true;
         "clangd-lsp@claude-plugins-official" = true;
+        "rust-analyzer-lsp@claude-plugins-official" = true;
+        "pyright-lsp@claude-plugins-official" = true;
+        "typescript-lsp@claude-plugins-official" = true;
       };
       sandbox = {
         enabled = true;
         autoAllowBashIfSandboxed = true;
         allowUnsandboxedCommands = true;
         network = {
-          allowedDomains = [ "github.com" "*.githubusercontent.com" "pypi.org" "files.pythonhosted.org" ];
+          allowedDomains = [
+            "github.com"
+            "api.github.com"
+            "*.githubusercontent.com"
+            "pypi.org"
+            "files.pythonhosted.org"
+            "registry.npmjs.org"
+            "crates.io"
+            "index.crates.io"
+            "static.crates.io"
+            "cache.nixos.org"
+          ];
+        };
+        filesystem = {
+          allowWrite = [
+            "~/Work/docs"
+            "~/.cache/nix"
+            "~/.cache/uv"
+            "~/.cargo/registry"
+            "~/.cargo/git"
+            "~/.npm"
+          ];
         };
         credentials = {
           files = [
@@ -148,14 +288,32 @@ in
       };
       theme = "custom:theme";
       autoMode = {
-        allow = [ "$defaults" ];
+        allow = [
+          "$defaults"
+          "Read-only inspection of cloud and cluster state: aws describe/list/get, kubectl get/describe/logs/diff, helm template, terraform plan"
+          "Building, linting and testing locally: nix build/eval, cargo check/clippy/test, uv run, npm test"
+        ];
         soft_deny = [
           "$defaults"
           "git push to any branch on any remote"
+          "Applying infrastructure changes: terraform or tofu apply, destroy, import, or state mutation"
+          "Changing a Kubernetes cluster or Helm release"
+          "Creating, modifying or deleting AWS resources, or uploading to S3"
+          "Publishing packages or container images"
+          "Creating, merging, closing, editing or commenting on GitHub PRs, issues, releases or workflow runs"
+          "Activating a system or home configuration: darwin-rebuild, nixos-rebuild, home-manager or nh switch"
+          "Running deploy, release or production migration scripts, including make/npm/just targets that do so"
+          "Running a denied command indirectly through a wrapper like uv run, nix develop -c, sh -c, or a new script"
         ];
       };
     };
   };
+
+  home.packages = with pkgs; [
+    pyright
+    rust-analyzer
+    typescript-language-server
+  ];
 
   home.file = {
     ".claude/statusline.sh".source = dotfile "claude/statusline.sh";
