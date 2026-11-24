@@ -108,6 +108,7 @@
       "ghostty"
       "google-chrome"
       "penso/tap/herdr-gpui"
+      "karabiner-elements"
       "marta"
       "openlogi"
       "orcaslicer"

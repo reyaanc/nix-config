@@ -7,6 +7,7 @@
     ./zed.nix
     ./claude.nix
     ./omniwm.nix
+    ./karabiner.nix
     ./sketchybar.nix
     ./wallpaper.nix
     ./herdr.nix

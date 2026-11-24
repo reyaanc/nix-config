@@ -44,5 +44,6 @@ After that every machine has the same three commands, which already know their o
 - Sign in to 1Password
 - `chsh -s /run/current-system/sw/bin/fish`
 - Give OmniWM Accessibility and Input Monitoring
-- Set Vicinae's hotkey to ⌘Space
+- Open Karabiner-Elements once, allow its driver extension in Privacy & Security, and give `karabiner_grabber` and `karabiner_observer` Input Monitoring
+- Give Ghostty Accessibility, for its global Super+Return
 - set the wallpapers in `~/Pictures/wallpapers`.
