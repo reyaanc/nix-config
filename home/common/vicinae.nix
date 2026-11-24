@@ -27,11 +27,6 @@ in
     } // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
       global_shortcuts.toggle = "cmd+super+alt+space";
       providers = {
-        applications.entrypoints = lib.mapAttrs (_: shortcut: { inherit shortcut; }) {
-          "org.mozilla.firefox" = "cmd+super+alt+w";
-          "org.yanex.marta" = "cmd+super+alt+e";
-          "dev.zed.Zed" = "cmd+super+alt+c";
-        };
         clipboard.entrypoints.history.shortcut = "cmd+super+alt+v";
         core.entrypoints.search-emojis.shortcut = "cmd+super+alt+.";
       };

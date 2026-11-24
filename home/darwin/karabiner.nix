@@ -40,6 +40,18 @@ in
               ) [ "left" "right" ];
             }
             {
+              description = "Super+key opens a new window";
+              manipulators = lib.mapAttrsToList (key: command: {
+                type = "basic";
+                from = { key_code = key; modifiers.mandatory = [ "control" "option" "command" ]; };
+                to = [ { shell_command = command; } ];
+              }) {
+                w = "/Applications/Firefox.app/Contents/MacOS/firefox --new-window";
+                e = "/Applications/Marta.app/Contents/Resources/Launcher ~";
+                c = "/Applications/Zed.app/Contents/MacOS/cli -n";
+              };
+            }
+            {
               description = "Terminals: Ctrl+Shift+key acts as Cmd+key";
               manipulators = map (letter: remap
                 { key_code = letter; modifiers.mandatory = [ "control" "shift" ]; }
