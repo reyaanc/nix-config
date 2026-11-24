@@ -45,6 +45,7 @@ in
         use_system_clipboard = "always";
       };
       vertical_scroll_margin = 10;
+      use_system_path_prompts = false;
       session = {
         trust_all_worktrees = true;
       };
