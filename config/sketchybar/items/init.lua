@@ -1,5 +1,4 @@
 require("items.apple")
-require("items.mode")
 require("items.spaces")
 require("items.agenda")
 require("items.media")

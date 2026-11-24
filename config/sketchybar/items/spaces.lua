@@ -6,7 +6,7 @@ local app_icons = require("helpers.app_icons")
 local slots = 8
 local app_font = "sketchybar-app-font:Regular:15.0"
 
-sbar.add("event", "aerospace_workspace_change")
+sbar.add("event", "omniwm_change")
 sbar.add("event", "workspaces_change")
 
 local scrolling = false
@@ -14,7 +14,7 @@ local function scroll(env)
   if scrolling then return end
   scrolling = true
   local direction = env.INFO.delta < 0 and "prev" or "next"
-  sbar.exec("aerospace list-workspaces --monitor focused --empty no | aerospace workspace --stdin --wrap-around " .. direction .. "; sleep 0.4", function()
+  sbar.exec("omniwmctl command switch-workspace " .. direction .. "; sleep 0.4", function()
     scrolling = false
   end)
 end
@@ -22,8 +22,8 @@ end
 local spaces = {}
 for sid = 1, 9 do
   local function click(env)
-    local command = env.BUTTON == "right" and "move-node-to-workspace" or "workspace"
-    sbar.exec("aerospace " .. command .. " " .. sid)
+    local command = env.BUTTON == "right" and "move-to-workspace" or "switch-workspace"
+    sbar.exec("omniwmctl command " .. command .. " " .. sid)
   end
 
   local space = sbar.add("item", "space." .. sid, {
@@ -126,7 +126,8 @@ local function group(windows)
   return by_ws
 end
 
-local render
+local render, update_badges
+local running_apps = ""
 
 -- The app font has no Herdr glyph, so Herdr's own ram logo is drawn as an image, rendered once per tint
 local function herdr_logo(tint)
@@ -278,8 +279,9 @@ local function update_avatars(windows)
   end)
 end
 
-local query = "aerospace list-windows --all --format '%{window-id}|%{workspace}|%{app-pid}|%{app-name}|%{window-title}'"
-  .. " && echo --- && aerospace list-workspaces --all --format '%{workspace}|%{monitor-is-main}|%{workspace-is-focused}'"
+-- sbar.exec hands JSON output over as a table; when OmniWM is down or IPC is off, ok is missing or false
+local windows_query = "omniwmctl query windows --format json"
+local workspaces_query = "omniwmctl query workspaces --format json"
 
 -- Events arrive in bursts (a window move fires several), so one landing mid-render only marks the bar dirty and the render in flight runs once more.
 function render()
@@ -289,30 +291,53 @@ function render()
   end
   rendering, dirty = true, false
 
-  sbar.exec(query, function(output, exit_code)
-    if exit_code == 0 then
-      local window_lines, workspace_lines = ("\n" .. output):match("^(.-)\n%-%-%-\n(.*)$")
-      local windows, workspaces = {}, {}
-      for line in window_lines:gmatch("[^\n]+") do
-        local id, ws, pid, app, title = line:match("^([^|]*)|([^|]*)|([^|]*)|([^|]*)|(.*)$")
-        -- herdr titles its Ghostty window "herdr · {workspace}", so it shares the Herdr app's icon
-        if app == "Ghostty" and title:find("^herdr · ") then app = "Herdr" end
-        table.insert(windows, { id = id, ws = ws, pid = pid, app = app })
-      end
-      for ws, main, focused in workspace_lines:gmatch("([^|\n]+)|(%a+)|(%a+)") do
-        workspaces[ws] = { main = main == "true", focused = focused == "true" }
-      end
-      update_avatars(windows)
-      draw(windows, workspaces)
-    end
+  sbar.exec(windows_query, function(window_result)
+    sbar.exec(workspaces_query, function(workspace_result)
+      if window_result.ok and workspace_result.ok then
+        local windows, workspaces, apps, seen = {}, {}, {}, {}
+        for _, window in ipairs(window_result.result.payload.windows) do
+          if window.workspace and window.app and window.windowId then
+            local app, title = window.app.name, window.title or ""
+            if not seen[app] then
+              seen[app] = true
+              table.insert(apps, "'" .. app:gsub("'", "'\\''") .. "'")
+            end
+            -- herdr titles its Ghostty window "herdr · {workspace}", so it shares the Herdr app's icon
+            if app == "Ghostty" and title:find("^herdr · ") then app = "Herdr" end
+            table.insert(windows, {
+              id = tostring(window.windowId),
+              ws = window.workspace.rawName,
+              pid = tostring(window.pid),
+              app = app,
+            })
+          end
+        end
+        for _, workspace in ipairs(workspace_result.result.payload.workspaces) do
+          workspaces[workspace.rawName] = {
+            main = not workspace.display or workspace.display.isMain,
+            focused = workspace.isCurrent,
+          }
+        end
+        update_avatars(windows)
+        draw(windows, workspaces)
 
-    rendering = false
-    if dirty then render() end
+        table.sort(apps)
+        local app_list = table.concat(apps, " ")
+        if app_list ~= running_apps then
+          running_apps = app_list
+          update_badges()
+        end
+      end
+
+      rendering = false
+      if dirty then render() end
+    end)
   end)
 end
 
 local function update_positions()
-  sbar.exec("aerospace list-windows --all --format '%{window-id}|%{workspace-is-visible}'", function(windows)
+  sbar.exec(windows_query, function(result)
+    if not result.ok then return end
     sbar.exec("$CONFIG_DIR/helpers/window_positions/bin/window_positions", function(helper)
       local live = {}
       for id, x, y, size in helper:gmatch("(%d+)|(-?%d+)|(-?%d+)|(-?%d+)") do
@@ -320,10 +345,13 @@ local function update_positions()
       end
 
       local order, visible, parked = {}, {}, {}
-      for id, is_visible in windows:gmatch("(%d+)|(%a+)") do
-        table.insert(order, id)
-        visible[id] = is_visible == "true"
-        if not visible[id] and live[id] then parked[live[id].x .. "|" .. live[id].y] = true end
+      for _, window in ipairs(result.result.payload.windows) do
+        if window.windowId then
+          local id = tostring(window.windowId)
+          table.insert(order, id)
+          visible[id] = window.isVisible
+          if not visible[id] and live[id] then parked[live[id].x .. "|" .. live[id].y] = true end
+        end
       end
 
       local seen, lines = {}, {}
@@ -351,8 +379,8 @@ local function update_positions()
   end)
 end
 
-local function update_badges()
-  sbar.exec([[aerospace list-apps --format '%{app-name}' | while IFS= read -r app; do
+function update_badges()
+  sbar.exec("for app in " .. running_apps .. [[; do
     label=$(lsappinfo info -only StatusLabel "$app" | sed -n 's/.*"label"="\(.*\)".*/\1/p')
     [ -n "$label" ] && echo "$app|$label"
   done]], function(output)
@@ -377,7 +405,7 @@ observer:subscribe("routine", function()
   update_positions()
   update_badges()
 end)
-observer:subscribe("aerospace_workspace_change", function()
+observer:subscribe("omniwm_change", function()
   render()
   update_positions()
 end)
@@ -385,5 +413,4 @@ observer:subscribe("space_windows_change", function()
   render()
   update_positions()
 end)
-observer:subscribe("aerospace_mode_change", update_positions)
 observer:subscribe("display_change", render)

@@ -89,10 +89,12 @@ local function parse_holds(list)
 end
 
 -- Claude Code animates the glyph in front of the session title while a turn runs, so only what follows it is matched.
-local function parse_windows(list)
+local function parse_windows(result)
   local found = {}
-  for wid, title in list:gmatch("(%d+)|([^\n]*)") do
-    found[title:match("^[^ ]* (.*)$") or title] = wid
+  if not result.ok then return found end
+  for _, window in ipairs(result.result.payload.windows) do
+    local title = window.title or ""
+    found[title:match("^[^ ]* (.*)$") or title] = window.id
   end
   return found
 end
@@ -147,7 +149,7 @@ local function draw(held, on, found, open)
       local wid = found[hold.detail]
       local action = wid and function()
         close_popup()
-        sbar.exec("aerospace focus --window-id " .. wid)
+        sbar.exec("omniwmctl window focus " .. wid)
       end
       table.insert(lines, { icon = ":claude:", font = app_font, color = colors.orange, text = text, action = action })
     elseif hold.id == "manual" then
@@ -200,14 +202,15 @@ local function update(env)
   -- and right after they change they alone decide: an ending session would otherwise show as started elsewhere.
   local changed = env.SENDER == "mouse.clicked" or env.SENDER == "awake_change"
   local open = changed or env.SENDER == "mouse.entered"
-  local command = awake_bin .. " list; echo ---; " .. awake_bin .. " active >/dev/null && echo on; echo ---;"
-    .. " aerospace list-windows --all --format '%{window-id}|%{window-title}'"
+  local command = awake_bin .. " list; echo ---; " .. awake_bin .. " active >/dev/null && echo on"
 
   sbar.exec(command, function(output)
-    local list, active, windows = ("\n" .. output):match("^(.-)\n%-%-%-\n(.-)%-%-%-\n(.*)$")
-    local held = parse_holds(list)
-    local on = #held > 0 or not changed and active:find("on") ~= nil
-    draw(held, on, parse_windows(windows), open and (hovering or changed))
+    local list, active = ("\n" .. output):match("^(.-)\n%-%-%-\n(.*)$")
+    sbar.exec("omniwmctl query windows --format json", function(windows)
+      local held = parse_holds(list)
+      local on = #held > 0 or not changed and active:find("on") ~= nil
+      draw(held, on, parse_windows(windows), open and (hovering or changed))
+    end)
   end)
 end
 
