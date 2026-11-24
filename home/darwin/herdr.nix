@@ -36,8 +36,6 @@ in
             peach = "orange";
           };
         };
-        # sketchybar matches herdr's Ghostty window by this title
-        ui.window_title = "herdr · {workspace}";
         worktrees.directory = "~/Worktrees";
       };
     };

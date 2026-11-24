@@ -1,7 +1,0 @@
-#!/usr/bin/env lua
-
--- home-manager's wrapper sets LUA_PATH to sbarlua's paths alone, which drops Lua's default lookup in the config directory
-package.path = "./?.lua;./?/init.lua;" .. package.path
-
-require("helpers")
-require("init")

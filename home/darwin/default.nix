@@ -9,7 +9,6 @@
     ./omniwm.nix
     ./karabiner.nix
     ./vicinae.nix
-    ./sketchybar.nix
     ./wallpaper.nix
     ./herdr.nix
     ./openlogi.nix

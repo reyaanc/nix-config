@@ -33,6 +33,7 @@ in
           "dev.zed.Zed" = "cmd+super+alt+c";
         };
         clipboard.entrypoints.history.shortcut = "cmd+super+alt+v";
+        core.entrypoints.search-emojis.shortcut = "cmd+super+alt+.";
       };
     });
   };

@@ -23,11 +23,15 @@
         NSAutomaticPeriodSubstitutionEnabled = false;
         NSAutomaticSpellingCorrectionEnabled = false;
         NSAutomaticInlinePredictionEnabled = false;
+        NSAutomaticQuoteSubstitutionEnabled = false;
+        NSAutomaticDashSubstitutionEnabled = false;
+        ApplePressAndHoldEnabled = false;
         AppleSpacesSwitchOnActivate = false;
         NSWindowShouldDragOnGesture = true;
         AppleEnableSwipeNavigateWithScrolls = false;
       };
       ".GlobalPreferences"."com.apple.mouse.scaling" = 1.5;
+      hitoolbox.AppleFnUsageType = "Do Nothing";
       dock = {
         tilesize = 1;
         orientation = "right";
