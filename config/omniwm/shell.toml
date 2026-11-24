@@ -1,0 +1,5 @@
+[profiles]
+
+[profiles.default]
+theme = "kanagawa"
+leading = ["apple-menu", "app-menu", "workspaces", "scratchpads"]

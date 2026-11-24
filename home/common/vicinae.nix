@@ -1,4 +1,4 @@
-{ config, pkgs, dotfile, ... }:
+{ config, lib, pkgs, dotfile, ... }:
 let
   t = config.theme;
   c = t.colors;
@@ -7,7 +7,7 @@ in
   xdg.configFile = {
     "vicinae/settings.json".source = dotfile "vicinae/settings.json";
 
-    "vicinae/home-manager.json".text = builtins.toJSON {
+    "vicinae/home-manager.json".text = builtins.toJSON ({
       theme = {
         dark.name = "theme";
         light.name = "theme";
@@ -24,7 +24,16 @@ in
         material = "blur";
       };
       favorites = [ "clipboard:history" ];
-    };
+    } // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
+      providers = {
+        applications.entrypoints = lib.mapAttrs (_: shortcut: { inherit shortcut; }) {
+          "org.mozilla.firefox" = "alt+w";
+          "org.yanex.marta" = "alt+e";
+          "dev.zed.Zed" = "alt+c";
+        };
+        clipboard.entrypoints.history.shortcut = "alt+v";
+      };
+    });
   };
 
   xdg.dataFile."vicinae/themes/theme.toml".source = (pkgs.formats.toml { }).generate "vicinae-theme" {

@@ -14,6 +14,7 @@ in
       macos-icon-screen-color = "#${c.bgDark},#${c.bg},#${c.bgHighlight}";
       macos-auto-secure-input = false;
       macos-option-as-alt = true;
+      keybind = [ "global:alt+enter=new_window" ];
     };
   };
 }

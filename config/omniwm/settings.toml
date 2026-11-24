@@ -76,7 +76,7 @@ ipcEnabled = true
 preventSleepEnabled = false
 systemHyperTrigger = "None"
 updateChecksEnabled = false
-workspaceAutoBackAndForth = true
+workspaceAutoBackAndForth = false
 
 [gestures]
 adoptNativeMoveAcrossDisplays = false
@@ -727,19 +727,19 @@ binding = "Unassigned"
 id = "moveColumnToWorkspace.8"
 
 [[hotkeys]]
-binding = "Option+Shift+H"
+binding = "Control+Option+Shift+H"
 id = "move.left"
 
 [[hotkeys]]
-binding = "Option+Shift+J"
+binding = "Control+Option+Shift+J"
 id = "move.down"
 
 [[hotkeys]]
-binding = "Option+Shift+K"
+binding = "Control+Option+Shift+K"
 id = "move.up"
 
 [[hotkeys]]
-binding = "Option+Shift+L"
+binding = "Control+Option+Shift+L"
 id = "move.right"
 
 [[hotkeys]]
@@ -819,19 +819,19 @@ binding = "Unassigned"
 id = "toggleNativeFullscreen"
 
 [[hotkeys]]
-binding = "Control+Option+Shift+Left Arrow"
+binding = "Option+Shift+H"
 id = "moveColumn.left"
 
 [[hotkeys]]
-binding = "Control+Option+Shift+Right Arrow"
+binding = "Option+Shift+L"
 id = "moveColumn.right"
 
 [[hotkeys]]
-binding = "Unassigned"
+binding = "Option+Shift+K"
 id = "moveColumn.up"
 
 [[hotkeys]]
-binding = "Unassigned"
+binding = "Option+Shift+J"
 id = "moveColumn.down"
 
 [[hotkeys]]

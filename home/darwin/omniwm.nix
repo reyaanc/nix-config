@@ -15,4 +15,9 @@ in
       borders.color = rgba config.theme.colors.blue 0.7;
     };
   };
+
+  xdg.configFile."omniwm/shell/shell.toml" = {
+    source = ../../config/omniwm/shell.toml;
+    force = true;
+  };
 }
