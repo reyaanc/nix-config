@@ -383,7 +383,7 @@ binding = "Control+Option+Command+S"
 id = "toggleScratchpad.1"
 
 [[hotkeys]]
-binding = "Control+Option+Shift+Command+S"
+binding = "Control+Option+Shift+Command+X"
 id = "assignFocusedWindowToScratchpad.1"
 
 [[hotkeys]]
@@ -1159,7 +1159,7 @@ binding = "Unassigned"
 id = "openCommandPalette.files"
 
 [[hotkeys]]
-binding = "Control+Option+Shift+Command+R"
+binding = "Control+Option+Shift+Command+F"
 id = "raiseAllFloatingWindows"
 
 [[hotkeys]]

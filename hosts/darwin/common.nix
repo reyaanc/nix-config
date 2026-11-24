@@ -82,7 +82,11 @@
           "32" "33" "36" "52" "57" "60" "61" "64" "65" "79" "81" "118" "159" "164" "175" "190" "222"
           "233" "235" "237" "238" "239" "240" "241" "242" "243" "244" "245" "246" "247" "248" "249"
           "250" "251" "256" "257" "258" "260"
-        ] (_: { enabled = false; });
+        ] (_: { enabled = false; }) // {
+          # Area screenshot to clipboard (31) and the screenshot toolbar (184) move to Super+Shift+S and Super+Shift+R: S/R as ASCII and key code, then ⌃⌥⇧⌘
+          "31" = { enabled = true; value = { parameters = [ 115 1 1966080 ]; type = "standard"; }; };
+          "184" = { enabled = true; value = { parameters = [ 114 15 1966080 ]; type = "standard"; }; };
+        };
       };
     };
   };
