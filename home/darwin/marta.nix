@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, ... }:
 let
   dir = "Library/Application Support/org.yanex.marta";
 in
@@ -31,10 +31,6 @@ in
         Separator1 null
 
       '' + lib.concatStrings (lib.mapAttrsToList (name: path: "${name} \"${path}\"\n") config.marta.favorites);
-
-      activation.martaFolders = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        run ${lib.getExe pkgs.duti} -s org.yanex.marta public.folder all
-      '';
     };
 
     targets.darwin.defaults.NSGlobalDomain.NSFileViewer = "org.yanex.marta";

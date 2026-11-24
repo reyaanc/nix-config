@@ -44,6 +44,5 @@ After that every machine has the same three commands, which already know their o
 - Sign in to 1Password
 - `chsh -s /run/current-system/sw/bin/fish`
 - Give OmniWM Accessibility and Input Monitoring
-- Turn on Enable IPC in OmniWM's menu-bar menu, since sketchybar reads workspaces through it
 - Set Vicinae's hotkey to ⌘Space
 - set the wallpapers in `~/Pictures/wallpapers`.
