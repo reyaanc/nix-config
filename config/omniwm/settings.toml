@@ -379,11 +379,11 @@ bundleId = "com.todoist.mac.Todoist"
 id = "9150EEBA-1D57-44B6-82F8-5AFF203F7682"
 
 [[hotkeys]]
-binding = "Unassigned"
+binding = "Option+S"
 id = "toggleScratchpad.1"
 
 [[hotkeys]]
-binding = "Unassigned"
+binding = "Option+Shift+S"
 id = "assignFocusedWindowToScratchpad.1"
 
 [[hotkeys]]
@@ -603,15 +603,15 @@ binding = "Unassigned"
 id = "moveToWorkspaceSlot.9"
 
 [[hotkeys]]
-binding = "Option+Tab"
+binding = "Control+Option+Tab"
 id = "workspaceBackAndForth"
 
 [[hotkeys]]
-binding = "Option+Right Bracket"
+binding = "Control+Option+Right Arrow"
 id = "switchWorkspace.next"
 
 [[hotkeys]]
-binding = "Option+Left Bracket"
+binding = "Control+Option+Left Arrow"
 id = "switchWorkspace.previous"
 
 [[hotkeys]]
@@ -631,7 +631,7 @@ binding = "Option+L"
 id = "focus.right"
 
 [[hotkeys]]
-binding = "Control+Option+Tab"
+binding = "Option+Shift+Tab"
 id = "focusPrevious"
 
 [[hotkeys]]
@@ -811,7 +811,7 @@ binding = "Unassigned"
 id = "moveWindowToMonitor.down"
 
 [[hotkeys]]
-binding = "Option+Return"
+binding = "Option+Shift+F"
 id = "toggleFullscreen"
 
 [[hotkeys]]
@@ -963,11 +963,11 @@ binding = "Unassigned"
 id = "moveColumnToIndex.9"
 
 [[hotkeys]]
-binding = "Option+Period"
+binding = "Control+Option+Period"
 id = "cycleSizeForward"
 
 [[hotkeys]]
-binding = "Option+Shift+Period"
+binding = "Control+Option+Comma"
 id = "cycleSizeBackward"
 
 [[hotkeys]]
@@ -987,7 +987,7 @@ binding = "Unassigned"
 id = "cycleWindowSecondarySpanBackward"
 
 [[hotkeys]]
-binding = "Option+Shift+F"
+binding = "Option+Shift+D"
 id = "toggleContainerFullPrimarySpan"
 
 [[hotkeys]]
@@ -999,11 +999,11 @@ binding = "Control+Option+R"
 id = "resetWindowSecondarySpan"
 
 [[hotkeys]]
-binding = "Control+Option+Minus"
+binding = "Option+Minus"
 id = "resizeContainerPrimarySpan.shrink"
 
 [[hotkeys]]
-binding = "Control+Option+Equal"
+binding = "Option+Equal"
 id = "resizeContainerPrimarySpan.grow"
 
 [[hotkeys]]
@@ -1055,11 +1055,11 @@ binding = "Unassigned"
 id = "resizeShrink.vertical"
 
 [[hotkeys]]
-binding = "Option+Equal"
+binding = "Option+Quote"
 id = "resizeFocusedWindow.grow"
 
 [[hotkeys]]
-binding = "Option+Minus"
+binding = "Option+Semicolon"
 id = "resizeFocusedWindow.shrink"
 
 [[hotkeys]]
@@ -1207,7 +1207,7 @@ binding = "Option+Comma"
 id = "toggleWorkspaceLayout"
 
 [[hotkeys]]
-binding = "Option+Shift+O"
+binding = "Option+Tab"
 id = "toggleOverview"
 
 [[hotkeys]]
