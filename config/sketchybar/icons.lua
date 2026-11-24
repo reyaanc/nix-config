@@ -1,9 +1,4 @@
 return {
-  apple = "\u{f179}",
-  dot = "\u{f111}",
-  square = "\u{f0c8}",
-  monitor = "\u{f0379}",
-  cellphone = "\u{f011c}",
   calendar = "\u{f073}",
   cup = "\u{f0f4}",
   hand = "\u{f256}",

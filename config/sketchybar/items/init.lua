@@ -1,5 +1,3 @@
-require("items.apple")
-require("items.spaces")
 require("items.agenda")
 require("items.media")
 require("items.calendar")
