@@ -27,12 +27,6 @@ in
     functions = {
       # Empty so vi mode changes repaint the whole prompt, which draws the mode character
       fish_mode_prompt = "";
-
-      # Unabbreviated cwd keeps titles unique per folder: sketchybar matches Ghostty windows to their folder by title
-      fish_title = ''
-        set -q argv[1]; or set argv (status current-command | string match -v fish)
-        echo -- (string sub -l 20 -- $argv[1]) (prompt_pwd -d 0)
-      '';
     };
 
     shellAliases = {
